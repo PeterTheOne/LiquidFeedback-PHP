@@ -1,0 +1,12 @@
+{
+    "name": "PeterTheOne/lqfb-php-lib",
+    "description": "LiquidFeedback PHP Library",
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Peter Grassberger aka. PeterTheOne",
+            "email": "petertheone@gmail.com"
+        }
+    ]
+}
