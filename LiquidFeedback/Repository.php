@@ -2,38 +2,40 @@
 
 namespace LiquidFeedback;
 
-// todo: autoload?
-require_once 'MainRepository.php';
-
-class MainController {
+class Repository {
 
     /**
-     * @var MainRepository
+     * @var \PDO
      */
-    public $repository;
+    public $pdo;
 
     /**
-     *
+     * @param $pdo
      */
-    public function __construct() {
-        $this->repository = new MainRepository();
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
     }
 
     /**
      * @return mixed
      */
     public function getLiquidFeedbackVersion() {
-        $liquidFeedbackVersion = $this->repository->getLiquidFeedbackVersion();
-        $liquidFeedbackVersion->core_version = $liquidFeedbackVersion->string;
-        unset($liquidFeedbackVersion->string);
-        return $liquidFeedbackVersion;
+        $statement = $this->pdo->prepare('
+            SELECT * FROM liquid_feedback_version;
+        ');
+        $statement->execute();
+        return $statement->fetch();
     }
 
     /**
      * @return mixed
      */
     public function getMemberCount() {
-        return $this->repository->getMemberCount();
+        $statement = $this->pdo->prepare('
+            SELECT * FROM member_count;
+        ');
+        $statement->execute();
+        return $statement->fetch();
     }
 
     /**
@@ -48,10 +50,12 @@ class MainController {
     public function getMember($id = null, $active = null, $search = null,
                               $orderByName = null, $orderByCreated = null,
                               $renderStatement = null) {
-        // todo: do something with the parameters
-        return $this->repository->getMember();
+        // todo: access level
+        $statement = $this->pdo->prepare('
+            SELECT id, name FROM member ORDER BY id;
+        ');
+        $statement->execute();
+        return $statement->fetchAll();
     }
-
-
 }
 
