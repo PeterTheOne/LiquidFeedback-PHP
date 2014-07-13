@@ -1,6 +1,6 @@
 <?php
 
-namespace LqfbPhpApi;
+namespace LiquidFeedback;
 
 // todo: autoload?
 require_once 'config.php';

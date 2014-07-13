@@ -1,15 +1,18 @@
 {
-    "name": "petertheone/lqfb-php-lib",
-    "description": "LiquidFeedback PHP Library",
+    "name": "petertheone/liquidfeedback",
+    "description": "LiquidFeedback Core Database access Library",
     "minimum-stability": "dev",
     "license": "MIT",
     "authors": [
         {
             "name": "Peter Grassberger aka. PeterTheOne",
-            "email": "petertheone@gmail.com"
+            "email": "petertheone@gmail.com",
+            "homepage": "http://petergrassberger.com/"
         }
     ],
     "autoload": {
-        "psr-0": { "LqfbPhpApi": "." }
+        "psr-0": {
+            "LiquidFeedback": "."
+        }
     }
 }
