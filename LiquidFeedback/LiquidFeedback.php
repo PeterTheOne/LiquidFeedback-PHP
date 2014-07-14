@@ -112,6 +112,22 @@ class LiquidFeedback {
     }
 
     /**
+     *
+     */
+    public function getContingent() {
+        $this->requireAccessLevel(self::ACCESS_LEVEL_ANONYMOUS);
+        return $this->repository->getContingent();
+    }
+
+    /**
+     *
+     */
+    public function getContingentLeft() {
+        $this->requireAccessLevel(self::ACCESS_LEVEL_MEMBER);
+        return $this->repository->getContingentLeft($this->currentMemberId);
+    }
+
+    /**
      * @param null $id
      * @param null $active
      * @param null $search

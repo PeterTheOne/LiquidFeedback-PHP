@@ -95,5 +95,25 @@ class Repository {
         }
         return $statement->orderBy('id')->fetchAll();
     }
+
+    /**
+     * @return array
+     */
+    public function getContingent() {
+        return $this->fpdo->from('contingent')->fetchAll();
+    }
+
+    /**
+     * @param $currentMemberId
+     * @return mixed
+     */
+    public function getContingentLeft($currentMemberId) {
+        return $this->fpdo
+            ->from('member_contingent_left')
+            ->select(null)
+            ->select(array('text_entries_left', 'initiatives_left'))
+            ->where('member_id = ?', $currentMemberId)
+            ->fetch();
+    }
 }
 

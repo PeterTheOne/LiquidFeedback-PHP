@@ -2,4 +2,11 @@
 <dataset>
     <member id="1" name="PeterTheOne" active="true" activated="2010-04-24 17:15:23" last_activity="2010-04-24" />
     <member id="2" name="Alf" active="false" />
+    <contingent polling="false" time_frame="01:00:00" text_entry_limit="20" initiative_limit="6" />
+    <contingent polling="false" time_frame="1 day" text_entry_limit="80" initiative_limit="12" />
+    <contingent polling="true" time_frame="01:00:00" text_entry_limit="200" initiative_limit="60" />
+    <contingent polling="true" time_frame="1 day" text_entry_limit="800" initiative_limit="120" />
+    <draft />
+    <suggestion />
+    <initiative />
 </dataset>
