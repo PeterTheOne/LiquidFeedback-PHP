@@ -93,12 +93,14 @@ class LiquidFeedback {
     /**
      * @return mixed
      */
-    public function getLiquidFeedbackVersion() {
+    public function getInfo() {
         $this->requireAccessLevel(self::ACCESS_LEVEL_ANONYMOUS);
-        $liquidFeedbackVersion = $this->repository->getLiquidFeedbackVersion();
-        $liquidFeedbackVersion->core_version = $liquidFeedbackVersion->string;
-        unset($liquidFeedbackVersion->string);
-        return $liquidFeedbackVersion;
+        $result = $this->repository->getLiquidFeedbackVersion();
+        $result->core_version = $result->string;
+        unset($result->string);
+        $result->current_access_level = $this->currentAccessLevel;
+        $result->current_member_id = $this->currentMemberId;
+        return $result;
     }
 
     /**
