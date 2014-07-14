@@ -112,7 +112,7 @@ class LiquidFeedback {
     }
 
     /**
-     *
+     * @return array
      */
     public function getContingent() {
         $this->requireAccessLevel(self::ACCESS_LEVEL_ANONYMOUS);
@@ -120,7 +120,7 @@ class LiquidFeedback {
     }
 
     /**
-     *
+     * @return mixed
      */
     public function getContingentLeft() {
         $this->requireAccessLevel(self::ACCESS_LEVEL_MEMBER);
