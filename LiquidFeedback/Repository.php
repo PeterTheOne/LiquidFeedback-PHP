@@ -26,7 +26,7 @@ class Repository {
      * @return mixed
      */
     public function getLiquidFeedbackVersion() {
-        return $this->fpdo->from('liquid_feedback_version')->fetchAll();
+        return $this->fpdo->from('liquid_feedback_version')->fetch();
     }
 
     /**
