@@ -79,13 +79,13 @@ class Repository {
         }
         if (isset($active)) {
             if ($active) {
-                $statement->where('active = :active OR active ISNULL', array(':active' => true));
+                $statement->where('active = TRUE OR active ISNULL');
             } else if (!$active) {
-                $statement->where('active = :active', array(':active' => false));
+                $statement->where('active = FALSE');
             }
         }
         if (isset($search)) {
-            $statement->where('text_search_data @@ text_search_query(:search)', array(':search' => $search));
+            $statement->where('text_search_data @@ text_search_query(?)', $search);
         }
         if (isset($orderByName)) {
             $statement->orderBy('name');
