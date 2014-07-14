@@ -1,4 +1,5 @@
 <?xml version="1.0" ?>
 <dataset>
-    <member_application />
+    <member id="1" name="PeterTheOne" active="true" activated="2010-04-24 17:15:23" last_activity="2010-04-24" />
+    <member id="2" name="Alf" active="false" />
 </dataset>

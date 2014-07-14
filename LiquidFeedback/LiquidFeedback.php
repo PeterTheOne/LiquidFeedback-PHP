@@ -117,15 +117,15 @@ class LiquidFeedback {
      * @param null $search
      * @param null $orderByName
      * @param null $orderByCreated
-     * @param null $renderStatement
      * @return array
      */
     public function getMember($id = null, $active = null, $search = null,
-                              $orderByName = null, $orderByCreated = null,
-                              $renderStatement = null) {
-        $this->requireAccessLevel(self::ACCESS_LEVEL_ANONYMOUS);
-        // todo: do something with the parameters
-        return $this->repository->getMember();
+                              $orderByName = null, $orderByCreated = null) {
+        $this->requireAccessLevel(self::ACCESS_LEVEL_PSEUDONYM);
+        if ($this->currentAccessLevel === self::ACCESS_LEVEL_PSEUDONYM) {
+            return $this->repository->getMemberPseudonym($id, $orderByName, $orderByCreated);
+        }
+        return $this->repository->getMember($id, $active, $search, $orderByName, $orderByCreated);
     }
 
 
