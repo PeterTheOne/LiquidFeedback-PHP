@@ -105,8 +105,26 @@ class LiquidFeedback {
      * @param $password
      */
     public function login($login, $password) {
-        $member = $this->repository->getMemberByLoginAndPassword($login, $password);
-        print_r($member);
+        $member = $this->repository->getMemberByLoginAndPassword($login);
+        if ($member && $this->checkPassword($password, $member->password)) {
+
+            // todo: set last login = now
+            // todo: delegations to check for member id
+            // todo: set last delegation check = now
+            // todo: set active = true
+            // todo: rehash password if hash needs update
+
+
+
+            unset($member->password);
+            unset($member->needs_delegation_check_hard);
+            return $member;
+        }
+        return null;
+    }
+
+    private function checkPassword($formPassword, $databasePassword) {
+        return crypt($formPassword, $databasePassword) === $databasePassword;
     }
 
     /**

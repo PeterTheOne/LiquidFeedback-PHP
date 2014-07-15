@@ -41,14 +41,18 @@ class Repository {
      * @param $password
      * @return array
      */
-    public function getMemberByLoginAndPassword($login, $password) {
+    public function getMemberByLoginAndPassword($login) {
+        // todo: fetch more parameters?
         return $this->fpdo
             ->from('member')
-            ->select(null)// todo: get interval from config
-            ->select(['now() > COALESCE(last_delegation_check, activated) + ?::interval' => '1 day']) // AS needs_delegation_check_hard ?
-            ->where('login', login)
+            ->select(null)
+            ->select(['id'])
+            ->select(['login'])
+            ->select(['password'])                                  // todo: get interval from config
+            ->select(['now() > COALESCE(last_delegation_check, activated) + \'' . '1 day' . '\'::interval AS needs_delegation_check_hard'])
+            ->where('login', $login)
             ->where('NOT "locked"')
-            ->fetchAll();
+            ->fetch();
     }
 
     /**
