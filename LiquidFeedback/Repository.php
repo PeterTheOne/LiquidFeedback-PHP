@@ -37,10 +37,25 @@ class Repository {
     }
 
     /**
+     * @param $login
+     * @param $password
+     * @return array
+     */
+    public function getMemberByLoginAndPassword($login, $password) {
+        return $this->fpdo
+            ->from('member')
+            ->select(null)// todo: get interval from config
+            ->select(['now() > COALESCE(last_delegation_check, activated) + ?::interval' => '1 day']) // AS needs_delegation_check_hard ?
+            ->where('login', login)
+            ->where('NOT "locked"')
+            ->fetchAll();
+    }
+
+    /**
      * @param null $id
      * @param null $orderByName
      * @param null $orderByCreated
-     * @return array
+     * @return mixed
      */
     public function getMemberPseudonym($id = null, $orderByName = null,
                                        $orderByCreated = null) {
@@ -54,7 +69,7 @@ class Repository {
         if (isset($orderByCreated)) {
             $statement->orderBy('created DESC');
         }
-        return $statement->orderBy('id')->fetchAll();
+        return $statement->orderBy('id')->fetch();
     }
 
     /**

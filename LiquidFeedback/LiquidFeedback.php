@@ -53,6 +53,9 @@ class LiquidFeedback {
         $this->currentMemberId = null;
     }
 
+    /**
+     * @param $accessLevel
+     */
     public function setCurrentAccessLevel($accessLevel) {
         if ($accessLevel === self::ACCESS_LEVEL_MEMBER ||
                 $accessLevel === self::ACCESS_LEVEL_FULL ||
@@ -63,10 +66,17 @@ class LiquidFeedback {
         }
     }
 
+    /**
+     * @param $currentMemberId
+     */
     public function setCurrentMemberId($currentMemberId) {
         $this->currentMemberId = $currentMemberId;
     }
 
+    /**
+     * @param $requiredAccessLevel
+     * @throws \Exception
+     */
     private function requireAccessLevel($requiredAccessLevel) {
         switch($requiredAccessLevel) {
             case self::ACCESS_LEVEL_ANONYMOUS:
@@ -88,6 +98,15 @@ class LiquidFeedback {
             default:
                 throw new \Exception('you don\'t have the required accessLevel');
         }
+    }
+
+    /**
+     * @param $login
+     * @param $password
+     */
+    public function login($login, $password) {
+        $member = $this->repository->getMemberByLoginAndPassword($login, $password);
+        print_r($member);
     }
 
     /**
