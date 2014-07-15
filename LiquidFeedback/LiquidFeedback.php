@@ -4,6 +4,7 @@ namespace LiquidFeedback;
 
 // todo: autoload?
 require_once 'Repository.php';
+require_once 'AccessLevel.php';
 
 class LiquidFeedback {
 
@@ -17,17 +18,14 @@ class LiquidFeedback {
      */
     private $repository;
 
-    const ACCESS_LEVEL_MEMBER = 0;
-    const ACCESS_LEVEL_FULL = 1;
-    const ACCESS_LEVEL_PSEUDONYM = 2;
-    const ACCESS_LEVEL_ANONYMOUS = 3;
-    const ACCESS_LEVEL_NONE = 4;
-
     /**
      * @var
      */
     private $currentAccessLevel;
 
+    /**
+     * @var null
+     */
     private $currentMemberId;
 
     /**
@@ -49,7 +47,7 @@ class LiquidFeedback {
         $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
         $this->repository = new Repository($this->pdo);
 
-        $this->currentAccessLevel = self::ACCESS_LEVEL_NONE;
+        $this->currentAccessLevel = \LiquidFeedback\AccessLevel::NONE;
         $this->currentMemberId = null;
     }
 
@@ -57,13 +55,10 @@ class LiquidFeedback {
      * @param $accessLevel
      */
     public function setCurrentAccessLevel($accessLevel) {
-        if ($accessLevel === self::ACCESS_LEVEL_MEMBER ||
-                $accessLevel === self::ACCESS_LEVEL_FULL ||
-                $accessLevel === self::ACCESS_LEVEL_PSEUDONYM ||
-                $accessLevel === self::ACCESS_LEVEL_ANONYMOUS ||
-                $accessLevel === self::ACCESS_LEVEL_NONE) {
-            $this->currentAccessLevel = $accessLevel;
+        if (!AccessLevel::validAccessLevel($accessLevel)) {
+            throw new \Exception('Invalid AccessLevel');
         }
+        $this->currentAccessLevel = $accessLevel;
     }
 
     /**
@@ -75,29 +70,9 @@ class LiquidFeedback {
 
     /**
      * @param $requiredAccessLevel
-     * @throws \Exception
      */
     private function requireAccessLevel($requiredAccessLevel) {
-        switch($requiredAccessLevel) {
-            case self::ACCESS_LEVEL_ANONYMOUS:
-                if ($this->currentAccessLevel === self::ACCESS_LEVEL_ANONYMOUS) {
-                    return;
-                }
-            case self::ACCESS_LEVEL_PSEUDONYM:
-                if ($this->currentAccessLevel === self::ACCESS_LEVEL_PSEUDONYM) {
-                    return;
-                }
-            case self::ACCESS_LEVEL_FULL:
-                if ($this->currentAccessLevel === self::ACCESS_LEVEL_FULL) {
-                    return;
-                }
-            case self::ACCESS_LEVEL_MEMBER:
-                if ($this->currentAccessLevel === self::ACCESS_LEVEL_MEMBER) {
-                    return;
-                }
-            default:
-                throw new \Exception('you don\'t have the required accessLevel');
-        }
+        AccessLevel::requireAccessLevel($this->currentAccessLevel, $requiredAccessLevel);
     }
 
     /**
@@ -131,7 +106,7 @@ class LiquidFeedback {
      * @return mixed
      */
     public function getInfo() {
-        $this->requireAccessLevel(self::ACCESS_LEVEL_ANONYMOUS);
+        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::ANONYMOUS);
         $result = $this->repository->getLiquidFeedbackVersion();
         $result->core_version = $result->string;
         unset($result->string);
@@ -144,7 +119,7 @@ class LiquidFeedback {
      * @return mixed
      */
     public function getMemberCount() {
-        $this->requireAccessLevel(self::ACCESS_LEVEL_ANONYMOUS);
+        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::ANONYMOUS);
         return $this->repository->getMemberCount();
     }
 
@@ -152,7 +127,7 @@ class LiquidFeedback {
      * @return array
      */
     public function getContingent() {
-        $this->requireAccessLevel(self::ACCESS_LEVEL_ANONYMOUS);
+        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::ANONYMOUS);
         return $this->repository->getContingent();
     }
 
@@ -160,7 +135,7 @@ class LiquidFeedback {
      * @return mixed
      */
     public function getContingentLeft() {
-        $this->requireAccessLevel(self::ACCESS_LEVEL_MEMBER);
+        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::MEMBER);
         return $this->repository->getContingentLeft($this->currentMemberId);
     }
 
@@ -174,8 +149,8 @@ class LiquidFeedback {
      */
     public function getMember($id = null, $active = null, $search = null,
                               $orderByName = null, $orderByCreated = null) {
-        $this->requireAccessLevel(self::ACCESS_LEVEL_PSEUDONYM);
-        if ($this->currentAccessLevel === self::ACCESS_LEVEL_PSEUDONYM) {
+        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::SEUDONYM);
+        if ($this->currentAccessLevel === \LiquidFeedback\AccessLevel::PSEUDONYM) {
             return $this->repository->getMemberPseudonym($id, $orderByName, $orderByCreated);
         }
         return $this->repository->getMember($id, $active, $search, $orderByName, $orderByCreated);
