@@ -29,24 +29,24 @@ class AccessLevel {
      */
     public static function requireAccessLevel($currentAccessLevel, $requiredAccessLevel) {
         switch($requiredAccessLevel) {
-            case self::ACCESS_LEVEL_ANONYMOUS:
-                if ($currentAccessLevel === self::ACCESS_LEVEL_ANONYMOUS) {
-                    return;
+            case self::ANONYMOUS:
+                if ($currentAccessLevel === self::ANONYMOUS) {
+                    return true;
                 }
-            case self::ACCESS_LEVEL_PSEUDONYM:
-                if ($currentAccessLevel === self::ACCESS_LEVEL_PSEUDONYM) {
-                    return;
+            case self::PSEUDONYM:
+                if ($currentAccessLevel === self::PSEUDONYM) {
+                    return true;
                 }
-            case self::ACCESS_LEVEL_FULL:
-                if ($currentAccessLevel === self::ACCESS_LEVEL_FULL) {
-                    return;
+            case self::ULL:
+                if ($currentAccessLevel === self::FULL) {
+                    return true;
                 }
-            case self::ACCESS_LEVEL_MEMBER:
-                if ($currentAccessLevel === self::ACCESS_LEVEL_MEMBER) {
-                    return;
+            case self::MEMBER:
+                if ($currentAccessLevel === self::MEMBER) {
+                    return true;
                 }
             default:
-                throw new \Exception('you don\'t have the required accessLevel');
+                return false;
         }
     }
 } 

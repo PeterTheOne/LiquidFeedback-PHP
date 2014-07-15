@@ -48,31 +48,29 @@ class LiquidFeedback {
         $this->repository = new Repository($this->pdo);
 
         $this->currentAccessLevel = \LiquidFeedback\AccessLevel::NONE;
-        $this->currentMemberId = null;
     }
 
     /**
      * @param $accessLevel
      */
-    public function setCurrentAccessLevel($accessLevel) {
+    public function setCurrentAccessLevel($accessLevel, $currentMemberId = null) {
         if (!AccessLevel::validAccessLevel($accessLevel)) {
             throw new \Exception('Invalid AccessLevel');
         }
         $this->currentAccessLevel = $accessLevel;
-    }
-
-    /**
-     * @param $currentMemberId
-     */
-    public function setCurrentMemberId($currentMemberId) {
         $this->currentMemberId = $currentMemberId;
+        if ($this->currentAccessLevel !== AccessLevel::MEMBER) {
+            $this->currentMemberId = null;
+        }
     }
 
     /**
      * @param $requiredAccessLevel
      */
     private function requireAccessLevel($requiredAccessLevel) {
-        AccessLevel::requireAccessLevel($this->currentAccessLevel, $requiredAccessLevel);
+        if (!AccessLevel::requireAccessLevel($this->currentAccessLevel, $requiredAccessLevel)) {
+            throw new \Exception('you don\'t have the required accessLevel');
+        }
     }
 
     /**
@@ -149,7 +147,7 @@ class LiquidFeedback {
      */
     public function getMember($id = null, $active = null, $search = null,
                               $orderByName = null, $orderByCreated = null) {
-        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::SEUDONYM);
+        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::PSEUDONYM);
         if ($this->currentAccessLevel === \LiquidFeedback\AccessLevel::PSEUDONYM) {
             return $this->repository->getMemberPseudonym($id, $orderByName, $orderByCreated);
         }
