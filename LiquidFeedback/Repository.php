@@ -116,6 +116,16 @@ class Repository {
         return $statement->orderBy('id')->fetchAll();
     }
 
+    public function getMemberApplicationByKey($key) {
+        return $this->fpdo
+            ->from('member_application')
+            ->select(null)
+            ->select('member.id')
+            ->where('member.activated NOTNULL')
+            ->where('member_application.key', $key)
+            ->fetch();
+    }
+
     /**
      * @return array
      */

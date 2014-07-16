@@ -47,7 +47,7 @@ class LiquidFeedback {
         $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
         $this->repository = new Repository($this->pdo);
 
-        $this->currentAccessLevel = \LiquidFeedback\AccessLevel::NONE;
+        $this->currentAccessLevel = AccessLevel::NONE;
     }
 
     /**
@@ -91,7 +91,7 @@ class LiquidFeedback {
             // todo: rehash password if hash needs update
 
 
-
+            $this->setCurrentAccessLevel(\AccessLevel::MEMBER, $member->id);
             unset($member->password);
             unset($member->needs_delegation_check_hard);
             return $member;
@@ -99,15 +99,45 @@ class LiquidFeedback {
         return null;
     }
 
+    /**
+     * @param $formPassword
+     * @param $databasePassword
+     * @return bool
+     */
     private function checkPassword($formPassword, $databasePassword) {
         return crypt($formPassword, $databasePassword) === $databasePassword;
+    }
+
+    public function startSession($key) {
+        if (!isset($key)) {
+            throw new Exception('No application key supplied.');
+        }
+        // todo: fetch key and compare
+        $memberApplication = $this->repository->getMemberApplicationByKey($key);
+        if (!$memberApplication) {
+            throw new Exception('Supplied application key is not valid.');
+        }
+
+        $this->setCurrentAccessLevel(AccessLevel::MEMBER, $memberApplication->id);
+        $memberApplication->session_key = $this->randomString(16);
+        return $memberApplication;
+    }
+
+    private function randomString($length = 32) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomInt = rand(0, strlen($characters) - 1);
+            $randomString .= $characters[$randomInt];
+        }
+        return $randomString;
     }
 
     /**
      * @return mixed
      */
     public function getInfo() {
-        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::ANONYMOUS);
+        $this->requireAccessLevel(AccessLevel::ANONYMOUS);
         $result = $this->repository->getLiquidFeedbackVersion();
         $result->core_version = $result->string;
         unset($result->string);
@@ -120,7 +150,7 @@ class LiquidFeedback {
      * @return mixed
      */
     public function getMemberCount() {
-        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::ANONYMOUS);
+        $this->requireAccessLevel(AccessLevel::ANONYMOUS);
         return $this->repository->getMemberCount();
     }
 
@@ -128,7 +158,7 @@ class LiquidFeedback {
      * @return array
      */
     public function getContingent() {
-        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::ANONYMOUS);
+        $this->requireAccessLevel(AccessLevel::ANONYMOUS);
         return $this->repository->getContingent();
     }
 
@@ -136,7 +166,7 @@ class LiquidFeedback {
      * @return mixed
      */
     public function getContingentLeft() {
-        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::MEMBER);
+        $this->requireAccessLevel(AccessLevel::MEMBER);
         return $this->repository->getContingentLeft($this->currentMemberId);
     }
 
@@ -150,8 +180,8 @@ class LiquidFeedback {
      */
     public function getMember($id = null, $active = null, $search = null,
                               $orderByName = null, $orderByCreated = null) {
-        $this->requireAccessLevel(\LiquidFeedback\AccessLevel::PSEUDONYM);
-        if ($this->currentAccessLevel === \LiquidFeedback\AccessLevel::PSEUDONYM) {
+        $this->requireAccessLevel(AccessLevel::PSEUDONYM);
+        if ($this->currentAccessLevel === AccessLevel::PSEUDONYM) {
             return $this->repository->getMemberPseudonym($id, $orderByName, $orderByCreated);
         }
         return $this->repository->getMember($id, $active, $search, $orderByName, $orderByCreated);
