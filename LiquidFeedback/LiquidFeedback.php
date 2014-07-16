@@ -110,12 +110,12 @@ class LiquidFeedback {
 
     public function startSession($key) {
         if (!isset($key)) {
-            throw new Exception('No application key supplied.');
+            throw new \Exception('No application key supplied.');
         }
         // todo: fetch key and compare
         $memberApplication = $this->repository->getMemberApplicationByKey($key);
         if (!$memberApplication) {
-            throw new Exception('Supplied application key is not valid.');
+            throw new \Exception('Supplied application key is not valid.');
         }
 
         $this->setCurrentAccessLevel(AccessLevel::MEMBER, $memberApplication->id);
