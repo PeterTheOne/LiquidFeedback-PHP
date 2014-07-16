@@ -58,9 +58,12 @@ class LiquidFeedback {
             throw new \Exception('Invalid AccessLevel');
         }
         $this->currentAccessLevel = $accessLevel;
-        $this->currentMemberId = $currentMemberId;
-        if ($this->currentAccessLevel !== AccessLevel::MEMBER) {
-            $this->currentMemberId = null;
+        $this->currentMemberId = null;
+        if ($this->currentAccessLevel === AccessLevel::MEMBER) {
+            if ($currentMemberId === null) {
+                throw new \Exception('MemberId is required.');
+            }
+            $this->currentMemberId = $currentMemberId;
         }
     }
 
