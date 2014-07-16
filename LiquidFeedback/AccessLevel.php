@@ -37,7 +37,7 @@ class AccessLevel {
                 if ($currentAccessLevel === self::PSEUDONYM) {
                     return true;
                 }
-            case self::ULL:
+            case self::FULL:
                 if ($currentAccessLevel === self::FULL) {
                     return true;
                 }
