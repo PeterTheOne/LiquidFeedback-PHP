@@ -91,7 +91,7 @@ class LiquidFeedback {
             // todo: rehash password if hash needs update
 
 
-            $this->setCurrentAccessLevel(\AccessLevel::MEMBER, $member->id);
+            $this->setCurrentAccessLevel(AccessLevel::MEMBER, $member->id);
             unset($member->password);
             unset($member->needs_delegation_check_hard);
             return $member;
