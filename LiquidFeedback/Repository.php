@@ -53,7 +53,7 @@ class Repository {
             ->select(['now() > COALESCE(last_delegation_check, activated) + \'' . '1 day' . '\'::interval AS needs_delegation_check_hard'])
             ->where('login', $login)
             ->where('NOT "locked"')
-            ->fetch();
+            ->fetchAll();
     }
 
     /**
@@ -74,7 +74,7 @@ class Repository {
         if (isset($orderByCreated)) {
             $statement->orderBy('created DESC');
         }
-        return $statement->orderBy('id')->fetch();
+        return $statement->orderBy('id')->fetchAll();
     }
 
     /**
