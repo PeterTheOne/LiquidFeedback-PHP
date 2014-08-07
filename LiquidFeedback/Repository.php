@@ -146,32 +146,102 @@ class Repository {
             ->fetch();
     }
 
-    public function getUnit($id = null, $parentId = null, $withoutParent = null,
-                            $disabled = null, $orderByPath = null) {
-        $statement= $this->fpdo->from('unit')->select(null)->select([
-            'id', 'parent_id', 'active', 'name', 'description', 'member_count'
-        ]);
-
+    /**
+     * @param \SelectQuery $statement
+     */
+    private function addUnitOptions(\SelectQuery $statement, $id, $parentId,
+                                    $withoutParent, $disabled, $orderByPath) {
         if (isset($id)) {
-            $statement->where('id', $id);
+            $statement->where('unit.id', $id);
         }
         if (isset($parentId)) {
-            $statement->where('parent_id = ?', $parentId);
+            $statement->where('unit.parent_id = ?', $parentId);
         }
         if (isset($withoutParent) && $withoutParent) {
-            $statement->where('partent_id ISNULL');
+            $statement->where('unit.partent_id ISNULL');
         }
         if (isset($disabled)) {
             if ($disabled === 'only') {
-                $statement->where('active = FALSE');
+                $statement->where('unit.active = FALSE');
             } else if ($disabled === 'include') {
-                $statement->where('active = TRUE');
+                $statement->where('unit.active = TRUE');
             }
         }
         if (isset($orderByPath)) {
-            $statement->orderBy('name');
+            $statement->orderBy('unit.name');
         }
+    }
+
+    /**
+     * @param null $id
+     * @param null $parentId
+     * @param null $withoutParent
+     * @param null $disabled
+     * @param null $orderByPath
+     * @return array
+     */
+    public function getUnit($id = null, $parentId = null, $withoutParent = null,
+                            $disabled = null, $orderByPath = null) {
+        $statement = $this->fpdo->from('unit')->select(null)->select([
+            'unit.id', 'unit.parent_id', 'unit.active', 'unit.name',
+            'unit.description', 'unit.member_count'
+        ]);
+
+        $this->addUnitOptions($statement, $id, $parentId, $withoutParent,
+            $disabled, $orderByPath);
+
         return $statement->orderBy('id')->fetchAll();
+    }
+
+    private function addAreaOptions(\SelectQuery $statement, $id, $disabled, $orderByName) {
+        if (isset($id)) {
+            $statement->where('area.id', $id);
+        }
+        if (isset($disabled)) {
+            if ($disabled === 'only') {
+                $statement->where('area.active = FALSE');
+            } else if ($disabled === 'include') {
+                $statement->where('area.active = TRUE');
+            }
+        }
+
+        // todo: area_my with access level check
+
+        if (isset($orderByName)) {
+            $statement->orderBy('area.name');
+        }
+    }
+
+    /**
+     * @param null $id
+     * @param null $disabled
+     * @param null $unitId
+     * @param null $unitParentId
+     * @param null $unitWithoutParent
+     * @param null $unitDisabled
+     * @param null $unitOrderByPath
+     * @return array
+     */
+    public function getArea($id = null, $disabled = null, $orderByName = null,
+                            $unitId = null, $unitParentId = null,
+                            $unitWithoutParent = null, $unitDisabled = null,
+                            $unitOrderByPath = null) {
+        $statement = $this->fpdo
+            ->from('area')
+            ->leftJoin('unit ON area.unit_id = unit.id')
+            ->select(null)
+            ->select([
+                'area.id', 'area.unit_id', 'area.active', 'area.name', 'area.description',
+                'area.direct_member_count', 'area.member_weight'
+            ]);
+
+        $this->addUnitOptions($statement, $unitId, $unitParentId, $unitWithoutParent,
+            $unitDisabled, $unitOrderByPath);
+        $this->addAreaOptions($statement, $id, $disabled, $orderByName);
+
+        // todo: add relatedData unit
+
+        return $statement->orderBy('area.id')->fetchAll();
     }
 }
 

@@ -201,6 +201,25 @@ class LiquidFeedback {
         return $this->repository->getUnit($id, $parentId, $withoutParent, $disabled, $orderByPath);
     }
 
+    /**
+     * @param null $id
+     * @param null $disabled
+     * @param null $unitId
+     * @param null $unitParentId
+     * @param null $unitWithoutParent
+     * @param null $unitDisabled
+     * @param null $unitOrderByPath
+     * @return array
+     */
+    public function getArea($id = null, $disabled = null, $orderByName = null,
+                            $unitId = null, $unitParentId = null,
+                            $unitWithoutParent = null, $unitDisabled = null,
+                            $unitOrderByPath = null) {
+        $this->requireAccessLevel(AccessLevel::ANONYMOUS);
+        return $this->repository->getArea($id, $disabled, $orderByName, $unitId, $unitParentId,
+            $unitWithoutParent, $unitDisabled, $unitOrderByPath);
+    }
+
 
 }
 
