@@ -193,7 +193,12 @@ class Repository {
         return $statement->orderBy('id')->fetchAll();
     }
 
-    private function addAreaOptions(\SelectQuery $statement, $id, $disabled, $orderByName) {
+    private function addAreaOptions(\SelectQuery $statement, $id, $disabled, $orderByName,
+                                    $unitId, $unitParentId, $unitWithoutParent,
+                                    $unitDisabled, $unitOrderByPath) {
+        $this->addUnitOptions($statement, $unitId, $unitParentId, $unitWithoutParent,
+            $unitDisabled, $unitOrderByPath);
+
         if (isset($id)) {
             $statement->where('area.id', $id);
         }
@@ -235,13 +240,103 @@ class Repository {
                 'area.direct_member_count', 'area.member_weight'
             ]);
 
-        $this->addUnitOptions($statement, $unitId, $unitParentId, $unitWithoutParent,
+        $this->addAreaOptions($statement, $id, $disabled, $orderByName, $unitId,
+            $unitParentId, $unitWithoutParent,
             $unitDisabled, $unitOrderByPath);
-        $this->addAreaOptions($statement, $id, $disabled, $orderByName);
 
         // todo: add relatedData unit
 
         return $statement->orderBy('area.id')->fetchAll();
+    }
+
+    /**
+     * @param \SelectQuery $statement
+     */
+    private function addIssueOptions(\SelectQuery $statement, $id = null,
+                                     $state = null, $createdAfter = null,
+                                     $createdBefore = null, $accepted = null,
+                                     $acceptedAfter = null, $acceptedBefore = null,
+                                     $halfFrozenAfter = null, $halfFrozenBefore = null,
+                                     $closed = null, $closedAfter = null,
+                                     $closedBefore = null, $cleaned = null,
+                                     $cleanedAfter = null, $cleanedBefore = null,
+                                     $stateTimeLeftBelow = null, $areaId = null,
+                                     $areaDisabled = null, $areaOrderByName = null,
+                                     $unitId = null, $unitParentId = null,
+                                     $unitWithoutParent = null, $unitDisabled = null,
+                                     $unitOrderByPath = null) { // todo: policy options
+        $this->addAreaOptions($statement, $areaId, $areaDisabled, $areaOrderByName, $unitId,
+            $unitParentId, $unitWithoutParent,
+            $unitDisabled, $unitOrderByPath);
+
+        // todo: add policy options
+
+        if (isset($id)) {
+            $statement->where('issue.id', $id);
+        }
+
+        // todo: issue.state
+
+        // todo: rest
+    }
+
+    /**
+     * @param null $id
+     * @param null $state
+     * @param null $createdAfter
+     * @param null $createdBefore
+     * @param null $accepted
+     * @param null $acceptedAfter
+     * @param null $acceptedBefore
+     * @param null $halfFrozenAfter
+     * @param null $halfFrozenBefore
+     * @param null $closed
+     * @param null $closedAfter
+     * @param null $closedBefore
+     * @param null $cleaned
+     * @param null $cleanedAfter
+     * @param null $cleanedBefore
+     * @param null $stateTimeLeftBelow
+     * @param null $areaId
+     * @param null $areaDisabled
+     * @param null $areaOrderByName
+     * @param null $unitId
+     * @param null $unitParentId
+     * @param null $unitWithoutParent
+     * @param null $unitDisabled
+     * @param null $unitOrderByPath
+     * @return array
+     */
+    public function getIssue($id = null, $state = null, $createdAfter = null,
+                             $createdBefore = null, $accepted = null,
+                             $acceptedAfter = null, $acceptedBefore = null,
+                             $halfFrozenAfter = null, $halfFrozenBefore = null,
+                             $closed = null, $closedAfter = null, $closedBefore = null,
+                             $cleaned = null, $cleanedAfter = null, $cleanedBefore = null,
+                             $stateTimeLeftBelow = null, $areaId = null,
+                             $areaDisabled = null, $areaOrderByName = null,
+                             $unitId = null, $unitParentId = null,
+                             $unitWithoutParent = null, $unitDisabled = null,
+                             $unitOrderByPath = null) { // todo: policy options
+        $statement = $this->fpdo
+            ->from('issue')
+            ->leftJoin('policy ON policy.id = issue.policy_id')
+            ->leftJoin('area ON area.id = issue.area_id')
+            ->leftJoin('unit ON area.unit_id = unit.id')
+            ->select(null)
+            ->select([
+                'issue.id', 'issue.area_id', 'issue.policy_id', 'issue.state', 'issue.created', 'issue.accepted',
+                'issue.half_frozen', 'issue.fully_frozen', 'issue.closed', 'issue.cleaned',
+                'issue.admission_time', 'issue.discussion_time', 'issue.verification_time',
+                'issue.voting_time', 'issue.snapshot', 'issue.latest_snapshot_event', 'issue.population',
+                'issue.voter_count', 'issue.status_quo_schulze_rank'
+            ]);
+
+        $this->addIssueOptions($statement);
+
+        // todo: add relatedData area, unit, policy
+
+        return $statement->orderBy('issue.id')->fetchAll();
     }
 }
 

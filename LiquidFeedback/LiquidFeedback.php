@@ -220,6 +220,54 @@ class LiquidFeedback {
             $unitWithoutParent, $unitDisabled, $unitOrderByPath);
     }
 
+    /**
+     * @param null $id
+     * @param null $state
+     * @param null $createdAfter
+     * @param null $createdBefore
+     * @param null $accepted
+     * @param null $acceptedAfter
+     * @param null $acceptedBefore
+     * @param null $halfFrozenAfter
+     * @param null $halfFrozenBefore
+     * @param null $closed
+     * @param null $closedAfter
+     * @param null $closedBefore
+     * @param null $cleaned
+     * @param null $cleanedAfter
+     * @param null $cleanedBefore
+     * @param null $stateTimeLeftBelow
+     * @param null $areaId
+     * @param null $areaDisabled
+     * @param null $areaOrderByName
+     * @param null $unitId
+     * @param null $unitParentId
+     * @param null $unitWithoutParent
+     * @param null $unitDisabled
+     * @param null $unitOrderByPath
+     * @return array
+     */
+    public function getIssue($id = null, $state = null, $createdAfter = null,
+                             $createdBefore = null, $accepted = null,
+                             $acceptedAfter = null, $acceptedBefore = null,
+                             $halfFrozenAfter = null, $halfFrozenBefore = null,
+                             $closed = null, $closedAfter = null, $closedBefore = null,
+                             $cleaned = null, $cleanedAfter = null, $cleanedBefore = null,
+                             $stateTimeLeftBelow = null, $areaId = null,
+                             $areaDisabled = null, $areaOrderByName = null,
+                             $unitId = null, $unitParentId = null,
+                             $unitWithoutParent = null, $unitDisabled = null,
+                             $unitOrderByPath = null) { // todo: policy options
+        $this->requireAccessLevel(AccessLevel::ANONYMOUS);
+        return $this->repository->getIssue($id, $state, $createdAfter,
+            $createdBefore, $accepted, $acceptedAfter, $acceptedBefore,
+            $halfFrozenAfter, $halfFrozenBefore, $closed, $closedAfter,
+            $closedBefore, $cleaned, $cleanedAfter, $cleanedBefore,
+            $stateTimeLeftBelow, $areaId, $areaDisabled, $areaOrderByName,
+            $unitId, $unitParentId, $unitWithoutParent, $unitDisabled,
+            $unitOrderByPath);
+    }
+
 
 }
 
