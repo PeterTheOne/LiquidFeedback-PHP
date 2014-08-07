@@ -145,5 +145,33 @@ class Repository {
             ->where('member_id = ?', $currentMemberId)
             ->fetch();
     }
+
+    public function getUnit($id = null, $parentId = null, $withoutParent = null,
+                            $disabled = null, $orderByPath = null) {
+        $statement= $this->fpdo->from('unit')->select(null)->select([
+            'id', 'parent_id', 'active', 'name', 'description', 'member_count'
+        ]);
+
+        if (isset($id)) {
+            $statement->where('id', $id);
+        }
+        if (isset($parentId)) {
+            $statement->where('parent_id = ?', $parentId);
+        }
+        if (isset($withoutParent) && $withoutParent) {
+            $statement->where('partent_id ISNULL');
+        }
+        if (isset($disabled)) {
+            if ($disabled === 'only') {
+                $statement->where('active = FALSE');
+            } else if ($disabled === 'include') {
+                $statement->where('active = TRUE');
+            }
+        }
+        if (isset($orderByPath)) {
+            $statement->orderBy('name');
+        }
+        return $statement->orderBy('id')->fetchAll();
+    }
 }
 

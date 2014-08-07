@@ -187,6 +187,20 @@ class LiquidFeedback {
         return $this->repository->getMember($id, $active, $search, $orderByName, $orderByCreated);
     }
 
+    /**
+     * @param null $id
+     * @param null $parentId
+     * @param null $withoutParent
+     * @param null $disabled
+     * @param null $orderByPath
+     * @return array
+     */
+    public function getUnit($id = null, $parentId = null, $withoutParent = null,
+                            $disabled = null, $orderByPath = null) {
+        $this->requireAccessLevel(AccessLevel::ANONYMOUS);
+        return $this->repository->getUnit($id, $parentId, $withoutParent, $disabled, $orderByPath);
+    }
+
 
 }
 
